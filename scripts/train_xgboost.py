@@ -23,7 +23,8 @@ def fit(F, S, seed, **params):
          "tree_method": "hist", "eval_metric": "mae", "random_state": seed, **params}
     m = xgb.XGBRegressor(**p)
     m.fit(F["train"], S["train"][2], eval_set=[(F["val"], S["val"][2])], verbose=False)
-    return m, float(np.mean(np.abs(m.predict(F["val"]) - S["val"][2])))
+    p = m.predict(F["val"])
+    return m, float(np.mean(np.abs(p - S["val"][2]))) if p.ndim == 1 else None      # None: quantile outputs
 
 
 def prepare(d, split, H):
